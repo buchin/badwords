@@ -2,7 +2,7 @@
     "name": "buchin/badwords",
     "description": "Badwords filter in PHP",
     "type": "library",
-    "license": "Halal",
+    "license": "MIT",
     "authors": [
         {
             "name": "Mochammad Masbuchin",
