@@ -1,0 +1,23 @@
+{
+    "name": "buchin/badwords",
+    "description": "Badwords filter in PHP",
+    "type": "library",
+    "license": "Halal",
+    "authors": [
+        {
+            "name": "Mochammad Masbuchin",
+            "email": "buchin@dropsugar.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "require_dev": {},
+    "autoload": {
+        "psr-4": {
+            "Buchin\\Badwords\\": "src/"
+        }
+    },
+    "require-dev": {
+        "kahlan/kahlan": "dev-master"
+    }
+}
