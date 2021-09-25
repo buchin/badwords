@@ -19,6 +19,16 @@ Example result:
 (boolean) true 
 */
 
+Badwords::isDirtyNegate("You are not an asshole");
+/*
+When string contains a negator like not, aren't, etc before the offensive word
+it returns 1
+Output
+-1 means NOT FOUND
+0 means found but no negator (const NEGATE) found before the offensive word 
+1 means found with a negator (const NEGATE) before the offensive word  
+*/
+
 Badwords::strip('Blood sugar sex magic');
 
 /*
