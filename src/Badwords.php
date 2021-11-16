@@ -1,6 +1,7 @@
 <?php namespace Buchin\Badwords;
 
 /**
+ * Updated by: Osah Prince
  *
  */
 class Badwords
@@ -104,6 +105,7 @@ class Badwords
         // 1 means found with a negator (const NEGATE) before the offensive word
         
         // Bad word in the sentence 
+        $sentence = preg_replace('/(\s\s+|\t|\n)/', ' ', $sentence);
         $getBadWord = Badwords::getBadword(strtolower(trim(($sentence))));
         if($getBadWord == -1)
         {
@@ -113,7 +115,7 @@ class Badwords
         // Checking if the word b4 the offensive word is negator
         $findme = $getBadWord;
         $pos = strpos($sentence, $findme);
-        $newSentence = explode(" ",trim(substr($sentence, 0, $pos)));
+        $newSentence = explode(" ",trim(substr(strtolower($sentence), 0, $pos)));
         // Getting the last word in the array.
         $last_word = end($newSentence);
 
@@ -123,19 +125,21 @@ class Badwords
             //Checking the word after the ARTICLE
             array_pop($newSentence);
             $newLastWord = end($newSentence);
-            if (Badwords::checkWord($last_word,'NEGAGE') == 1) {
+            // echo "NEGATE ($newLastWord) == ". Badwords::checkWord($newLastWord,'NEGATE');
+            if (Badwords::checkWord($newLastWord,'NEGATE') == 1) {
+                // Found with a negator
                 return 1;
             }
             else
             {
-                return -1;
+                // Found without a negator
+                return 0;
             }
         }
-        else if(Badwords::checkWord($last_word,'NEGAGE') == 1)
+        else if(Badwords::checkWord($last_word,'NEGATE') == 1)
         {
             return 1;
         }
-
         return 0;
     }
 
