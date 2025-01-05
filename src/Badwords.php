@@ -1,12 +1,8 @@
 <?php namespace Buchin\Badwords;
 
-/**
- * Updated by: Osah Prince
- *
- */
 class Badwords
 {
-    const NEGATE = ["aint", "arent", "cannot", "cant", "couldnt", "darent", "didnt", "doesnt",
+    const NEGATOR = ["aint", "arent", "cannot", "cant", "couldnt", "darent", "didnt", "doesnt",
         "ain't", "aren't", "can't", "couldn't", "daren't", "didn't", "doesn't",
         "dont", "hadnt", "hasnt", "havent", "isnt", "mightnt", "mustnt", "neither",
         "don't", "hadn't", "hasn't", "haven't", "isn't", "mightn't", "mustn't",
@@ -37,7 +33,7 @@ class Badwords
             }
         }
 
-        return 0;
+        return false;
     }
 
     public static function strip($string)
@@ -97,63 +93,46 @@ class Badwords
         return -1;     
     }
 
-    public static function isDirtyNegate($sentence)
+    public static function negationCheck($sentence)
     {
-        // Output
-        // -1 means NOT FOUND
-        // 0 means found but no negator (const NEGATE) found before the offensive word
-        // 1 means found with a negator (const NEGATE) before the offensive word
+        $isBadWord = 1;
+        $isNeutral = 0;
+        $notFound = -1;
         
-        // Bad word in the sentence 
-        $sentence = preg_replace('/(\s\s+|\t|\n)/', ' ', $sentence);
-        $getBadWord = Badwords::getBadword(strtolower(trim(($sentence))));
+        $sentence = preg_replace('/(\s\s+|\t|\n)/', ' ', strtolower(trim($sentence)));
+        $getBadWord = Badwords::getBadword(($sentence));
         if($getBadWord == -1)
         {
-            return -1;
+            return $notFound;
         }
         
         // Checking if the word b4 the offensive word is negator
         $findme = $getBadWord;
         $pos = strpos($sentence, $findme);
-        $newSentence = explode(" ",trim(substr(strtolower($sentence), 0, $pos)));
+        $precedingWords = explode(" ",trim(substr($sentence, 0, $pos)));
         // Getting the last word in the array.
-        $last_word = end($newSentence);
+        $last_word = end($precedingWords);
 
         // check if it's an article b4 the fowl word
         if(Badwords::checkWord($last_word,'ARTICLE') == 1)
         {
-            //Checking the word after the ARTICLE
-            array_pop($newSentence);
-            $newLastWord = end($newSentence);
-            // echo "NEGATE ($newLastWord) == ". Badwords::checkWord($newLastWord,'NEGATE');
-            if (Badwords::checkWord($newLastWord,'NEGATE') == 1) {
-                // Found with a negator
-                return 1;
-            }
-            else
-            {
-                // Found without a negator
-                return 0;
-            }
+            //Checking the word before the ARTICLE
+            return Badwords::checkWord(prev($precedingWords),'NEGATOR') == 1 ? $isNeutral : $isBadWord;
         }
-        else if(Badwords::checkWord($last_word,'NEGATE') == 1)
-        {
-            return 1;
-        }
-        return 0;
+        
+        return (Badwords::checkWord($last_word,'NEGATOR') == 1) ? $isNeutral : $isBadWord;
     }
 
     public static function checkWord($word,$const)
     {
-        $constant = ($const == "NEGATE") ? self::NEGATE : self::ARTICLE;
-        // print_r($constant);
+        $constant = ($const == "NEGATOR") ? self::NEGATOR : self::ARTICLE;
         foreach($constant as $value)
         {
             if ($value == $word) {
                 return 1;
             }
         }
-        return 0;
+        return -1;
     }
 
     public static function getBadPhrases()
