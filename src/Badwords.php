@@ -66,26 +66,22 @@ class Badwords
         }, explode("\n", file_get_contents(__DIR__ . "/badwords.txt")));
     }
 
-    // Return a single bad word found in the sentence
     public static function getBadword($sentence)
     {
         $isDirty = self::isDirty($sentence);
         
-        // List of badwords
         $getBadWords = self::getBadWords();
         if($isDirty == 1)
-        {
-        // Offensive word is found
-        // return the word 
+        { 
             $sentenceArray = explode(" ", strtolower($sentence));
             for($i = 0; $i < count($sentenceArray); $i++)
-                    for ($k=0; $k < count($getBadWords); $k++) { 
-                    
-                    {
-                            if ($sentenceArray[$i] == $getBadWords[$k]) {
-                                return $getBadWords[$k];
-                            }
+                for ($k=0; $k < count($getBadWords); $k++) { 
+                
+                {
+                    if ($sentenceArray[$i] == $getBadWords[$k]) {
+                        return $getBadWords[$k];
                     }
+                }
             }
 
 
@@ -106,17 +102,13 @@ class Badwords
             return $notFound;
         }
         
-        // Checking if the word b4 the offensive word is negator
         $findme = $getBadWord;
         $pos = strpos($sentence, $findme);
         $precedingWords = explode(" ",trim(substr($sentence, 0, $pos)));
-        // Getting the last word in the array.
         $last_word = end($precedingWords);
 
-        // check if it's an article b4 the fowl word
         if(Badwords::checkWord($last_word,'ARTICLE') == 1)
         {
-            //Checking the word before the ARTICLE
             return Badwords::checkWord(prev($precedingWords),'NEGATOR') == 1 ? $isNeutral : $isBadWord;
         }
         
