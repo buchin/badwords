@@ -1,10 +1,19 @@
 <?php namespace Buchin\Badwords;
 
-/**
- *
- */
 class Badwords
 {
+    const NEGATOR = ["aint", "arent", "cannot", "cant", "couldnt", "darent", "didnt", "doesnt",
+        "ain't", "aren't", "can't", "couldn't", "daren't", "didn't", "doesn't",
+        "dont", "hadnt", "hasnt", "havent", "isnt", "mightnt", "mustnt", "neither",
+        "don't", "hadn't", "hasn't", "haven't", "isn't", "mightn't", "mustn't",
+        "neednt", "needn't", "never", "no", "none", "nope", "nor", "not", "nothing", "nowhere",
+        "oughtnt", "shant", "shouldnt", "uhuh", "wasnt", "werent",
+        "oughtn't", "shan't", "shouldn't", "uh-uh", "wasn't", "weren't",
+        "without", "wont", "wouldnt", "won't", "wouldn't", "rarely", "seldom", "despite"];
+
+    const ARTICLE = ["a", "an", "the"];
+
+
     public static function isDirty($string)
     {
         $words = explode(" ", $string);
@@ -55,6 +64,67 @@ class Badwords
         return array_map(function ($item) {
             return strtolower(trim($item));
         }, explode("\n", file_get_contents(__DIR__ . "/badwords.txt")));
+    }
+
+    public static function getBadword($sentence)
+    {
+        $isDirty = self::isDirty($sentence);
+        
+        $getBadWords = self::getBadWords();
+        if($isDirty == 1)
+        { 
+            $sentenceArray = explode(" ", strtolower($sentence));
+            for($i = 0; $i < count($sentenceArray); $i++)
+                for ($k=0; $k < count($getBadWords); $k++) { 
+                
+                {
+                    if ($sentenceArray[$i] == $getBadWords[$k]) {
+                        return $getBadWords[$k];
+                    }
+                }
+            }
+
+
+        }
+        return -1;     
+    }
+
+    public static function negationCheck($sentence)
+    {
+        $isBadWord = 1;
+        $isNeutral = 0;
+        $notFound = -1;
+        
+        $sentence = preg_replace('/(\s\s+|\t|\n)/', ' ', strtolower(trim($sentence)));
+        $getBadWord = Badwords::getBadword(($sentence));
+        if($getBadWord == -1)
+        {
+            return $notFound;
+        }
+        
+        $findme = $getBadWord;
+        $pos = strpos($sentence, $findme);
+        $precedingWords = explode(" ",trim(substr($sentence, 0, $pos)));
+        $last_word = end($precedingWords);
+
+        if(Badwords::checkWord($last_word,'ARTICLE') == 1)
+        {
+            return Badwords::checkWord(prev($precedingWords),'NEGATOR') == 1 ? $isNeutral : $isBadWord;
+        }
+        
+        return (Badwords::checkWord($last_word,'NEGATOR') == 1) ? $isNeutral : $isBadWord;
+    }
+
+    public static function checkWord($word,$const)
+    {
+        $constant = ($const == "NEGATOR") ? self::NEGATOR : self::ARTICLE;
+        foreach($constant as $value)
+        {
+            if ($value == $word) {
+                return 1;
+            }
+        }
+        return -1;
     }
 
     public static function getBadPhrases()

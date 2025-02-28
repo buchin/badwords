@@ -43,4 +43,49 @@ describe("Badwords", function () {
             });
         });
     });
+
+    describe("negationCheck()", function() {
+        context("when sentence doesn't contain bad word", function(){
+            it("returns -1 when no bad word is found", function() {
+                expect(
+                    Badwords::negationCheck("I am Jerespy")
+                )->toBe(-1);
+            });
+        });
+
+        context("when sentence contains a bad word but contains a negator before the bad word", function() {
+            it("return 0 when a negator appeare before bad word", function() {
+                expect(
+                    Badwords::negationCheck("I am an not asshole")
+                )->toBe(0);
+            });
+        });
+
+        context("when sentence contains a bad word", function() {
+            it("return 1 when a bad word is present in the sentence", function() {
+                expect(
+                    Badwords::negationCheck("blood sugar sex magic")
+                )->toBe(1);
+            });
+        });
+    });
+
+    describe("getBadword()", function (){
+        context("return bad word from a sentence", function() {
+            it("return bad word in sentence", function() {
+                expect(
+                    Badwords::getBadword("I am an not asshole")
+                )->toBe("asshole");
+            });
+        });
+
+        context("return -1 from a sentence, if no bad word was found", function() {
+            it("return -1", function() {
+                expect(
+                    Badwords::getBadword("I am Jerespy")
+                )->toBe(-1);
+            });
+        });
+    });
+
 });
